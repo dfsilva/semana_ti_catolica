@@ -1,5 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:catolica/screens/auth/login.dart';
+import 'package:catolica/screens/auth/register.dart';
+import 'package:catolica/screens/home/home.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,7 +23,12 @@ class MyApp extends StatelessWidget {
             height: 50
           )
         ),
-        home: LoginScreen(),
+        initialRoute: "login",
+        routes: {
+          "login": (context) => LoginScreen(),
+          "home": (context) => HomeScreen(),
+          "register": (context) => RegisterScreen(),
+        },
       ),
     );
   }
