@@ -1,6 +1,7 @@
 import 'package:catolica/service/usuario_service.dart';
 import 'package:catolica/utils/message_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class RegisterScreen extends StatefulWidget {
 
 class RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usuarioService = UsuarioService();
+  UsuarioService _usuarioService;
 
   bool _showPassword = false;
 
@@ -24,6 +25,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+    _usuarioService = Provider.of<UsuarioService>(context);
 
     this._focusNome = FocusNode();
     this._focusEmail = FocusNode();

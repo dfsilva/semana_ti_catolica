@@ -1,8 +1,7 @@
-
-import 'package:bot_toast/bot_toast.dart';
 import 'package:catolica/service/usuario_service.dart';
 import 'package:catolica/utils/message_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,29 +10,35 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usuarioService = UsuarioService();
+  UsuarioService _usuarioService;
 
   bool _showPassword = false;
 
   String _email;
   String _senha;
 
+  @override
+  initState() {
+    super.initState();
+    _usuarioService = Provider.of<UsuarioService>(this.context);
+  }
+
   _login() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      try{
-        _usuarioService.entrarComEmailSenha(_email, _senha).then((usuario){
-          if(usuario != null){
+      try {
+        _usuarioService.entrarComEmailSenha(_email, _senha).then((usuario) {
+          if (usuario != null) {
             Navigator.of(context).pushReplacementNamed("home");
-          }else{
+          } else {
             showError("Usuário não cadastrado");
           }
-        }).catchError((error){
+        }).catchError((error) {
           print("Errooooooo!!!!!");
           showError("Erro ao fazer login");
         });
-      }catch(e){
+      } catch (e) {
         showError("Erro ao fazer login");
       }
     }
