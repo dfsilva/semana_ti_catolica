@@ -20,7 +20,6 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   initState() {
     super.initState();
-    _usuarioService = Provider.of<UsuarioService>(this.context);
   }
 
   _login() {
@@ -46,6 +45,8 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _usuarioService = Provider.of<UsuarioService>(this.context);
+
     return Scaffold(
       body: Column(
         children: <Widget>[

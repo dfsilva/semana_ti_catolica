@@ -1,8 +1,11 @@
 import 'package:catolica/domain/atividade.dart';
 import 'package:catolica/service/atividade_service.dart';
+import 'package:catolica/service/usuario_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,8 +15,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final AtividadeService _atividadeService = new AtividadeService();
 
+  UsuarioService _usuarioService;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _usuarioService = Provider.of<UsuarioService>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Semana TI Católica 2020"),
@@ -23,25 +34,27 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue[800]),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: 60,
-                    height: 60,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text("Diego Silva", style: TextStyle(color: Colors.white)),
-                  Text("diegosiuniube@gmail.com", style: TextStyle(color: Colors.white))
-                ],
+              child: Observer(
+                builder: (ctx) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      width: 60,
+                      height: 60,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(this._usuarioService.usuarioState.usuario.nome, style: TextStyle(color: Colors.white)),
+                    Text(this._usuarioService.usuarioState.usuario.email, style: TextStyle(color: Colors.white))
+                  ],
+                ),
               ),
             ),
             ListTile(
               onTap: () {
-                Navigator.pop(context);
+//                Navigator.pop(context);
               },
               leading: Icon(Icons.exit_to_app),
               title: Text("Sair"),

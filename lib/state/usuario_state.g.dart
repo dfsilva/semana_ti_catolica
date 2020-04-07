@@ -26,6 +26,23 @@ mixin _$UsuarioState on _UsuarioState, Store {
     }, _$usuarioAtom, name: '${_$usuarioAtom.name}_set');
   }
 
+  final _$statusLoginAtom = Atom(name: '_UsuarioState.statusLogin');
+
+  @override
+  String get statusLogin {
+    _$statusLoginAtom.context.enforceReadPolicy(_$statusLoginAtom);
+    _$statusLoginAtom.reportObserved();
+    return super.statusLogin;
+  }
+
+  @override
+  set statusLogin(String value) {
+    _$statusLoginAtom.context.conditionallyRunInAction(() {
+      super.statusLogin = value;
+      _$statusLoginAtom.reportChanged();
+    }, _$statusLoginAtom, name: '${_$statusLoginAtom.name}_set');
+  }
+
   final _$_UsuarioStateActionController =
       ActionController(name: '_UsuarioState');
 
@@ -40,8 +57,19 @@ mixin _$UsuarioState on _UsuarioState, Store {
   }
 
   @override
+  dynamic setStatusLogin(String status) {
+    final _$actionInfo = _$_UsuarioStateActionController.startAction();
+    try {
+      return super.setStatusLogin(status);
+    } finally {
+      _$_UsuarioStateActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
-    final string = 'usuario: ${usuario.toString()}';
+    final string =
+        'usuario: ${usuario.toString()},statusLogin: ${statusLogin.toString()}';
     return '{$string}';
   }
 }

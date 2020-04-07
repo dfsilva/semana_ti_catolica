@@ -25,8 +25,6 @@ class RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _usuarioService = Provider.of<UsuarioService>(context);
-
     this._focusNome = FocusNode();
     this._focusEmail = FocusNode();
     this._focusSenha = FocusNode();
@@ -55,6 +53,8 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _usuarioService = Provider.of<UsuarioService>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Cadastrar-se"),
