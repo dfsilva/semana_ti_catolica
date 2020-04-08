@@ -46,15 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text(this._usuarioService.usuarioState.usuario.nome, style: TextStyle(color: Colors.white)),
-                    Text(this._usuarioService.usuarioState.usuario.email, style: TextStyle(color: Colors.white))
+                    Text(this._usuarioService.usuarioStore.usuario.nome, style: TextStyle(color: Colors.white)),
+                    Text(this._usuarioService.usuarioStore.usuario.email, style: TextStyle(color: Colors.white))
                   ],
                 ),
               ),
             ),
             ListTile(
               onTap: () {
-//                Navigator.pop(context);
+                _usuarioService.logout();
               },
               leading: Icon(Icons.exit_to_app),
               title: Text("Sair"),

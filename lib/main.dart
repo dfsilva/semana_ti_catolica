@@ -4,7 +4,7 @@ import 'package:catolica/screens/auth/register.dart';
 import 'package:catolica/screens/auth/splash.dart';
 import 'package:catolica/screens/home/home.dart';
 import 'package:catolica/service/usuario_service.dart';
-import 'package:catolica/state/usuario_state.dart';
+import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/navigator_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +18,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BotToastInit(
       child: MultiProvider(
-        providers: [Provider<UsuarioService>(create: (_) => UsuarioService(UsuarioState()))],
+        providers: [
+          Provider<UsuarioService>(
+            create: (_) => UsuarioService(UsuarioStore()),
+            dispose: (ctx, usuarioService) {
+              usuarioService.dispose();
+            },
+          )
+        ],
         child: MaterialApp(
           title: 'Semana de TI Católica',
           navigatorObservers: [BotToastNavigatorObserver()],

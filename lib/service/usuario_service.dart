@@ -1,19 +1,33 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:catolica/domain/usuario.dart';
-import 'package:catolica/state/usuario_state.dart';
+import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/navigator_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UsuarioService {
-  final UsuarioState usuarioState;
+  final UsuarioStore usuarioStore;
+  StreamSubscription<StatusLogin> _statusLoginSubscription;
+  SharedPreferences _preferences;
 
-  UsuarioService(this.usuarioState);
+  UsuarioService(this.usuarioStore) {
+    this._statusLoginSubscription = usuarioStore.statusSubject.listen((value) {
+      if (value == StatusLogin.logado) {
+        NavigatorUtils.nav.currentState.pushReplacementNamed("home");
+      } else {
+        NavigatorUtils.nav.currentState.pushReplacementNamed("login");
+      }
+    });
+    SharedPreferences.getInstance().then((value) {
+      _preferences = value;
+    });
+  }
 
   Future<Usuario> entrarComEmailSenha(String email, String senha) async {
     Usuario usuarioLogado = Usuario(nome: "Diego Ferreira", email: email);
-    (await SharedPreferences.getInstance()).setString("usuario_logado", jsonEncode(usuarioLogado.toJson()));
-    usuarioState.setUsuario(usuarioLogado);
+    _preferences.setString("usuario_logado", jsonEncode(usuarioLogado.toJson()));
+    usuarioStore.setUsuario(usuarioLogado);
     return Future.value(usuarioLogado);
   }
 
@@ -22,25 +36,26 @@ class UsuarioService {
   }
 
   Future<void> logout() {
-    //todo: codificar logout do usuario
+    _preferences.remove("usuario_logado");
+    usuarioStore.setStatusLogin(StatusLogin.nao_logado);
   }
 
   Future<Usuario> verificarUsuarioAutenticado() async {
     return Future.delayed(Duration(seconds: 10), () {
-      return SharedPreferences.getInstance().then((sharedPref) {
-        String usuarioStr = sharedPref.getString("usuario_logado");
-        if (usuarioStr != null) {
-          Usuario usuarioLogado = Usuario.fromJson(jsonDecode(usuarioStr));
-          usuarioState.setUsuario(usuarioLogado);
-          usuarioState.setStatusLogin("logado");
-          NavigatorUtils.nav.currentState.pushReplacementNamed("home");
-          return usuarioLogado;
-        } else {
-          NavigatorUtils.nav.currentState.pushReplacementNamed("login");
-          usuarioState.setStatusLogin("nao_logado");
-          return null;
-        }
-      });
+      String usuarioStr = _preferences.getString("usuario_logado");
+      if (usuarioStr != null) {
+        Usuario usuarioLogado = Usuario.fromJson(jsonDecode(usuarioStr));
+        usuarioStore.setUsuario(usuarioLogado);
+        usuarioStore.setStatusLogin(StatusLogin.logado);
+        return usuarioLogado;
+      } else {
+        usuarioStore.setStatusLogin(StatusLogin.nao_logado);
+        return null;
+      }
     });
+  }
+
+  void dispose() {
+    _statusLoginSubscription.cancel();
   }
 }
