@@ -28,9 +28,7 @@ class LoginScreenState extends State<LoginScreen> {
 
       try {
         _usuarioService.entrarComEmailSenha(_email, _senha).then((usuario) {
-          if (usuario != null) {
-            Navigator.of(context).pushReplacementNamed("home");
-          } else {
+          if (usuario == null) {
             showError("Usuário não cadastrado");
           }
         }).catchError((error) {
@@ -129,7 +127,9 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed("recover");
+                    },
                     child: Padding(
                       padding: EdgeInsets.all(20),
                       child: Text(

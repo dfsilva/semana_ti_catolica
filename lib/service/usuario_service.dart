@@ -28,7 +28,14 @@ class UsuarioService {
     Usuario usuarioLogado = Usuario(nome: "Diego Ferreira", email: email);
     _preferences.setString("usuario_logado", jsonEncode(usuarioLogado.toJson()));
     usuarioStore.setUsuario(usuarioLogado);
+    usuarioStore.setStatusLogin(StatusLogin.logado);
     return Future.value(usuarioLogado);
+  }
+
+  Future<bool> recuperarSenha(String email) async {
+    return Future.delayed(Duration(seconds: 5), () {
+      return Future.value(true);
+    });
   }
 
   Future<Usuario> criarUsuario(String nome, String email, String senha) {
@@ -41,7 +48,7 @@ class UsuarioService {
   }
 
   Future<Usuario> verificarUsuarioAutenticado() async {
-    return Future.delayed(Duration(seconds: 10), () {
+    return Future.delayed(Duration(seconds: 5), () {
       String usuarioStr = _preferences.getString("usuario_logado");
       if (usuarioStr != null) {
         Usuario usuarioLogado = Usuario.fromJson(jsonDecode(usuarioStr));
