@@ -86,8 +86,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                       this._focusNome.unfocus();
                       this._focusEmail.requestFocus();
                     },
-                    onSaved: (email) {
-                      this._email = email;
+                    onSaved: (nome) {
+                      this._nome = nome;
                     },
                     decoration: InputDecoration(hintText: "nome", labelText: "nome", icon: Icon(Icons.account_box)),
                   ),

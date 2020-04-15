@@ -1,9 +1,11 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catolica/screens/atividade/atividade.dart';
 import 'package:catolica/screens/auth/login.dart';
 import 'package:catolica/screens/auth/recover.dart';
 import 'package:catolica/screens/auth/register.dart';
 import 'package:catolica/screens/auth/splash.dart';
 import 'package:catolica/screens/home/home.dart';
+import 'package:catolica/service/atividade_service.dart';
 import 'package:catolica/service/usuario_service.dart';
 import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/navigator_utils.dart';
@@ -25,6 +27,12 @@ class MyApp extends StatelessWidget {
             dispose: (ctx, usuarioService) {
               usuarioService.dispose();
             },
+          ),
+          Provider<AtividadeService>(
+            create: (_) => AtividadeService(),
+            dispose: (ctx, atividadeService) {
+              atividadeService.dispose();
+            },
           )
         ],
         child: MaterialApp(
@@ -41,6 +49,7 @@ class MyApp extends StatelessWidget {
             "home": (context) => HomeScreen(),
             "register": (context) => RegisterScreen(),
             "recover": (context) => RecoverScreen(),
+            "atividade": (context) => AtividadeScreen(),
           },
         ),
       ),

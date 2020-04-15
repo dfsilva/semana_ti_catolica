@@ -62,6 +62,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+      floatingActionButton: Observer(
+        builder: (ctx) {
+          if (_usuarioService.usuarioStore.usuario.admin) {
+            return FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed("atividade");
+              },
+              child: Icon(Icons.add),
+            );
+          } else {
+            return SizedBox.shrink();
+          }
+        },
+      ),
       body: FutureBuilder(
         future: _atividadeService.buscarAtividades(),
         builder: (context, AsyncSnapshot<List<Atividade>> snapshot) {
@@ -107,6 +121,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
+                            Observer(
+                              builder: (ctx) {
+                                if (_usuarioService.usuarioStore.usuario.admin) {
+                                  return InkWell(
+                                    onTap: () {},
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Text("Editar"),
+                                    ),
+                                  );
+                                } else {
+                                  return SizedBox.shrink();
+                                }
+                              },
+                            ),
                             InkWell(
                               onTap: () {},
                               child: Padding(
