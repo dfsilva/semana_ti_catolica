@@ -1,21 +1,21 @@
 import 'package:catolica/domain/atividade.dart';
+import 'package:catolica/stores/atividade_store.dart';
 
 class AtividadeService {
+
+  final AtividadeStore atividadeStore;
+
+  AtividadeService(this.atividadeStore);
+
   Future<List<Atividade>> buscarAtividades() {
-    return Future.delayed(Duration(seconds: 5), () {
-      //TODO: retornar lista de atividades da ativiade_store que deve ser criada
-      return Future.value([]);
-    });
+    return Future.value(atividadeStore.atividades);
   }
 
   Future<Atividade> salvar(Atividade atividade){
-    //TODO: persistir a atividade em uma lista de atividades
-    //no estado global dentro de atividade_store(atividade_store deve ser criada)
-
-    return Future.error("Nao implementado");
+    atividadeStore.adicionarAtividade(atividade);
+    return Future.value(atividade);
   }
-
-
+  
   void dispose(){
 
   }

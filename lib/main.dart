@@ -7,6 +7,7 @@ import 'package:catolica/screens/auth/splash.dart';
 import 'package:catolica/screens/home/home.dart';
 import 'package:catolica/service/atividade_service.dart';
 import 'package:catolica/service/usuario_service.dart';
+import 'package:catolica/stores/atividade_store.dart';
 import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/navigator_utils.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
             },
           ),
           Provider<AtividadeService>(
-            create: (_) => AtividadeService(),
+            create: (_) => AtividadeService(AtividadeStore()),
             dispose: (ctx, atividadeService) {
               atividadeService.dispose();
             },

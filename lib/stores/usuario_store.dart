@@ -2,13 +2,9 @@ import 'package:catolica/domain/usuario.dart';
 import 'package:mobx/mobx.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 part 'usuario_store.g.dart';
 
-
-enum StatusLogin{
-  carregando, logado, nao_logado
-}
+enum StatusLogin { carregando, logado, nao_logado }
 
 class UsuarioStore = _UsuarioStore with _$UsuarioStore;
 
@@ -26,11 +22,14 @@ abstract class _UsuarioStore with Store {
     this.usuario = _usuario;
   }
 
+  @computed
+  bool get isAdmin {
+    return usuario.admin;
+  }
+
   @action
   setStatusLogin(StatusLogin status) {
     this.statusLogin = status;
     statusSubject.add(this.statusLogin);
   }
 }
-
-

@@ -9,6 +9,12 @@ part of 'usuario_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$UsuarioStore on _UsuarioStore, Store {
+  Computed<bool> _$isAdminComputed;
+
+  @override
+  bool get isAdmin =>
+      (_$isAdminComputed ??= Computed<bool>(() => super.isAdmin)).value;
+
   final _$usuarioAtom = Atom(name: '_UsuarioStore.usuario');
 
   @override
@@ -69,7 +75,7 @@ mixin _$UsuarioStore on _UsuarioStore, Store {
   @override
   String toString() {
     final string =
-        'usuario: ${usuario.toString()},statusLogin: ${statusLogin.toString()}';
+        'usuario: ${usuario.toString()},statusLogin: ${statusLogin.toString()},isAdmin: ${isAdmin.toString()}';
     return '{$string}';
   }
 }
