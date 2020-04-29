@@ -52,18 +52,18 @@ class AtividadeScreenState extends State<AtividadeScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      Atividade _atividade = Atividade(
-          nome: this._nome,
-          local: this._local,
-          descricao: this._descricao,
-          dataHoraInicio: this._dataHoraInicio,
-          dataHoraFim: this._dataHoraFim,
-          usuario: this._usuarioService.usuarioStore.usuario.uid);
-
-      this._atividadeService.salvar(_atividade).then((value) {
-        showInfo("Atividade adicionada");
-        Navigator.of(context).pop();
-      });
+//      Atividade _atividade = Atividade(
+//          nome: this._nome,
+//          local: this._local,
+//          descricao: this._descricao,
+//          dataHoraInicio: this._dataHoraInicio,
+//          dataHoraFim: this._dataHoraFim,
+//          usuario: this._usuarioService.usuarioStore.usuario.uid);
+//
+//      this._atividadeService.salvar(_atividade).then((value) {
+//        showInfo("Atividade adicionada");
+//        Navigator.of(context).pop();
+//      });
     }
   }
 

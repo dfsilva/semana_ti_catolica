@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  mobx: 1.1.1
-  flutter_mobx: 1.1.0
+  redux: 4.0.0
+  flutter_redux: 0.6.0
   provider: 4.0.4
   rxdart: 0.23.1
 
@@ -26,8 +26,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: 1.9.0
-  mobx_codegen: 1.0.3
 
 flutter:
   uses-material-design: true

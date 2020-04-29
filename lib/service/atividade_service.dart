@@ -1,21 +1,21 @@
 import 'package:catolica/domain/atividade.dart';
-import 'package:catolica/stores/atividade_store.dart';
+//import 'package:catolica/stores/atividade_state.dart';
 
 class AtividadeService {
 
-  final AtividadeStore atividadeStore;
+//  final AtividadeStore atividadeStore;
 
-  AtividadeService(this.atividadeStore);
+  AtividadeService();
 
   Future<List<Atividade>> buscarAtividades() {
-    return Future.value(atividadeStore.atividades);
+//    return Future.value(atividadeStore.atividades);
   }
 
   Future<Atividade> salvar(Atividade atividade){
-    atividadeStore.adicionarAtividade(atividade);
+//    atividadeStore.adicionarAtividade(atividade);
     return Future.value(atividade);
   }
-  
+
   void dispose(){
 
   }

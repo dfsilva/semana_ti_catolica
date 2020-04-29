@@ -1,6 +1,6 @@
-import 'package:catolica/service/usuario_service.dart';
+import 'package:catolica/actions/usuario_actions.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -10,12 +10,14 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
-    UsuarioService usuarioService = Provider.of<UsuarioService>(context);
-    usuarioService.verificarUsuarioAutenticado();
     return Scaffold(
-      body: Center(
-        child: Text("Semana de Tecnológia Católica", style: TextStyle(fontSize: 20)),
-      ),
+      body: StoreConnector(
+          onInit: (store) {
+            store.dispatch(VerificarStatusUsuario());
+          },
+          builder: (ctx, conv) => Center(
+                child: Text("Semana de Tecnológia Católica", style: TextStyle(fontSize: 20)),
+              )),
     );
   }
 }
