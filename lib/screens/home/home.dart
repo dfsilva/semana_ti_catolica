@@ -1,9 +1,13 @@
-import 'package:catolica/service/atividade_service.dart';
-import 'package:catolica/service/usuario_service.dart';
+import 'package:catolica/actions/usuario_actions.dart';
+import 'package:catolica/domain/atividade.dart';
+import 'package:catolica/domain/usuario.dart';
+import 'package:catolica/state/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:redux/redux.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,32 +15,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AtividadeService _atividadeService;
-  UsuarioService _usuarioService;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _usuarioService = Provider.of<UsuarioService>(context);
-    _atividadeService = Provider.of<AtividadeService>(context);
+  _buildBody(_ViewModel _viewModel) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Semana TI Católica 2020"),
-//        actions: [
-//          Observer(
-//            builder: (ctx) => Padding(
-//              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-//              child: Text(
-//                _atividadeService.atividadeStore.quantidadeAtividades.toString(),
-//                style: TextStyle(fontSize: 30),
-//              ),
-//            ),
-//          )
-//        ],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Text(
+              _viewModel.atividades.length.toString(),
+              style: TextStyle(fontSize: 30),
+            ),
+          )
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -54,14 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 10,
                   ),
-//                    Text(this._usuarioService.usuarioStore.usuario.nome, style: TextStyle(color: Colors.white)),
-//                    Text(this._usuarioService.usuarioStore.usuario.email, style: TextStyle(color: Colors.white))
+                  Text(_viewModel.usuarioLogado.nome, style: TextStyle(color: Colors.white)),
+                  Text(_viewModel.usuarioLogado.email, style: TextStyle(color: Colors.white))
                 ],
               ),
             ),
             ListTile(
               onTap: () {
-                _usuarioService.logout();
+                ProgressHUD.of(context).showWithText("Saindo....");
+                _viewModel.logout();
               },
               leading: Icon(Icons.exit_to_app),
               title: Text("Sair"),
@@ -69,100 +61,118 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: _getBotaoAcao(),
-//      body: _listaAtividades(),
+      floatingActionButton: _getBotaoAcao(_viewModel),
+      body: _listaAtividades(_viewModel),
     );
   }
 
-  _getBotaoAcao(){
-//    if (_usuarioService.usuarioStore.usuario.admin) {
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, _ViewModel>(
+      onInit: (store) {
+        ProgressHUD.of(context).dismiss();
+      },
+      converter: (Store<AppState> store) => _ViewModel.create(store),
+      builder: (_, _ViewModel _viewModel) => _buildBody(_viewModel),
+    );
+  }
+
+  _getBotaoAcao(_ViewModel _viewModel) {
+    if (_viewModel.usuarioLogado.admin) {
       return FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed("atividade");
         },
         child: Icon(Icons.add),
       );
-//    } else {
-//      return SizedBox.shrink();
-//    }
+    } else {
+      return SizedBox.shrink();
+    }
   }
 
-//  _listaAtividades() {
-//    return Observer(
-//      builder: (ctx) {
-//        if (_atividadeService.atividadeStore.atividades.isEmpty) {
-//          return Center(
-//            child: Text("Sem atividades para exibir"),
-//          );
-//        }
-//        return ListView(
-//          children: _atividadeService.atividadeStore.atividades.map((ativade) {
-//            return Card(
-//                child: InkWell(
-//              child: Container(
-//                height: 370,
-//                child: Column(
-//                  crossAxisAlignment: CrossAxisAlignment.start,
-//                  children: <Widget>[
-////                      Container(width: double.maxFinite, height: 150, child: Image.network(ativade.foto, fit: BoxFit.cover)),
-//                    SizedBox(
-//                      height: 10,
-//                    ),
-//                    Padding(
-//                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-//                      child: Text(ativade.nome, style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-//                    ),
-//                    Padding(
-//                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-//                      child: Text(ativade.descricao, style: TextStyle(color: Colors.black54), overflow: TextOverflow.ellipsis, maxLines: 4),
-//                    ),
-//                    Padding(
-//                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-//                      child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
-//                          style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-//                    ),
-//                    Padding(
-//                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-//                      child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
-//                          style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-//                    ),
-//                    Expanded(
-//                      child: Row(
-//                        mainAxisAlignment: MainAxisAlignment.end,
-//                        crossAxisAlignment: CrossAxisAlignment.end,
-//                        children: <Widget>[
-//                          Observer(
-//                            builder: (ctx) {
-//                              if (_usuarioService.usuarioStore.usuario.admin) {
-//                                return InkWell(
-//                                  onTap: () {},
-//                                  child: Padding(
-//                                    padding: const EdgeInsets.all(20),
-//                                    child: Text("Editar"),
-//                                  ),
-//                                );
-//                              } else {
-//                                return SizedBox.shrink();
-//                              }
-//                            },
-//                          ),
-//                          InkWell(
-//                            onTap: () {},
-//                            child: Padding(
-//                              padding: const EdgeInsets.all(20),
-//                              child: Text("Avise-me"),
-//                            ),
-//                          )
-//                        ],
-//                      ),
-//                    )
-//                  ],
-//                ),
-//              ),
-//            ));
-//          }).toList(),
-//        );
-//      },
-//    );
-//  }
+  _listaAtividades(_ViewModel _viewModel) {
+    if (_viewModel.atividades.isEmpty) {
+      return Center(
+        child: Text("Sem atividades para exibir"),
+      );
+    }
+    return ListView(
+      children: _viewModel.atividades.map((ativade) {
+        return Card(
+            child: InkWell(
+          child: Container(
+            height: 370,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+//                      Container(width: double.maxFinite, height: 150, child: Image.network(ativade.foto, fit: BoxFit.cover)),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text(ativade.nome, style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text(ativade.descricao, style: TextStyle(color: Colors.black54), overflow: TextOverflow.ellipsis, maxLines: 4),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
+                      style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
+                      style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      _viewModel.usuarioLogado.admin
+                          ? InkWell(
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Text("Editar"),
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                      InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Text("Avise-me"),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
+      }).toList(),
+    );
+  }
+}
+
+class _ViewModel {
+  final Usuario usuarioLogado;
+  final List<Atividade> atividades;
+  final Function() logout;
+
+  _ViewModel({this.usuarioLogado, this.atividades, this.logout});
+
+  factory _ViewModel.create(Store<AppState> store) {
+    return _ViewModel(
+        usuarioLogado: store.state.usuarioState.usuario,
+        atividades: store.state.atividadeState.atividades,
+        logout: () {
+          store.dispatch(FazerLogout());
+        });
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:catolica/actions/usuario_actions.dart';
+import 'package:catolica/state/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -15,7 +17,8 @@ class _SplashState extends State<Splash> {
           onInit: (store) {
             store.dispatch(VerificarStatusUsuario());
           },
-          builder: (ctx, conv) => Center(
+          converter: (Store<AppState> store) => store,
+          builder: (_, __) => Center(
                 child: Text("Semana de Tecnológia Católica", style: TextStyle(fontSize: 20)),
               )),
     );

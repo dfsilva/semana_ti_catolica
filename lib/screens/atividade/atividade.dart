@@ -5,7 +5,6 @@ import 'package:catolica/utils/message_utils.dart';
 import 'package:catolica/widgets/form/date_time_form.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class AtividadeScreen extends StatefulWidget {
   @override
@@ -14,8 +13,6 @@ class AtividadeScreen extends StatefulWidget {
 
 class AtividadeScreenState extends State<AtividadeScreen> {
   final _formKey = GlobalKey<FormState>();
-  UsuarioService _usuarioService;
-  AtividadeService _atividadeService;
 
   String _nome;
   String _descricao;
@@ -69,8 +66,6 @@ class AtividadeScreenState extends State<AtividadeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _usuarioService = Provider.of<UsuarioService>(context);
-    _atividadeService = Provider.of<AtividadeService>(context);
 
     return Scaffold(
       appBar: AppBar(

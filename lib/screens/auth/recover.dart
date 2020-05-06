@@ -1,7 +1,10 @@
-import 'package:catolica/service/usuario_service.dart';
+import 'package:catolica/actions/usuario_actions.dart';
+import 'package:catolica/state/app_state.dart';
 import 'package:catolica/utils/message_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
 class RecoverScreen extends StatefulWidget {
   @override
@@ -10,13 +13,9 @@ class RecoverScreen extends StatefulWidget {
 
 class RecoverScreenState extends State<RecoverScreen> {
   final _formKey = GlobalKey<FormState>();
-  UsuarioService _usuarioService;
 
-  bool _showPassword = false;
-  
   String _email;
   FocusNode _focusEmail;
-
 
   @override
   void initState() {
@@ -30,23 +29,23 @@ class RecoverScreenState extends State<RecoverScreen> {
     super.dispose();
   }
 
-  _recover() {
+  _recover(_ViewModel _viewModel) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      _usuarioService.recuperarSenha(_email).then((result) {
+      ProgressHUD.of(context).showWithText("Enviando...");
+      _viewModel.recuperarSenha(_email, (data) {
+        ProgressHUD.of(context).dismiss();
         showInfo("Senha enviada com sucesso!");
         Navigator.of(context).pop();
-      }).catchError((error) {
+      }, (error) {
+        ProgressHUD.of(context).dismiss();
         print("Errooooooo!!!!!");
         showError("Erro ao fazer login");
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _usuarioService = Provider.of<UsuarioService>(context);
-
+  _buildBody(_ViewModel _viewModel) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Recuperar sua senha"),
@@ -87,7 +86,7 @@ class RecoverScreenState extends State<RecoverScreen> {
                   child: RaisedButton(
                     child: Text("Recuperar senha"),
                     onPressed: () {
-                      _recover();
+                      _recover(_viewModel);
                     },
                   ),
                 ),
@@ -97,5 +96,25 @@ class RecoverScreenState extends State<RecoverScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, _ViewModel>(
+      converter: (store) => _ViewModel.create(store),
+      builder: (_, _ViewModel _viewModel) => _buildBody(_viewModel),
+    );
+  }
+}
+
+class _ViewModel {
+  final Function(String _email, Function _onSuccess, Function _onError) recuperarSenha;
+
+  _ViewModel({this.recuperarSenha});
+
+  factory _ViewModel.create(Store<AppState> store) {
+    return _ViewModel(recuperarSenha: (_email, _onSuccess, _onError) {
+      store.dispatch(RecuperarSenha(email: _email, onSuccess: _onSuccess, onError: _onError));
+    });
   }
 }
