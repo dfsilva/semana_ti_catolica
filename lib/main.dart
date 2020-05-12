@@ -22,6 +22,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
   Store<AppState> store = Store<AppState>(appReducer,
       initialState: AppState(
         atividadeState: AtividadeState(const []),
@@ -40,14 +41,14 @@ class MyApp extends StatelessWidget {
           navigatorKey: NavigatorUtils.nav,
           theme: ThemeData(
               primarySwatch: Colors.blue,
-              buttonTheme: ButtonThemeData(buttonColor: Colors.blue[700], textTheme: ButtonTextTheme.primary, height: 50)),
+              buttonTheme: ButtonThemeData(buttonColor: Colors.blue[700],
+                  textTheme: ButtonTextTheme.primary, height: 50)),
           initialRoute: "splash",
           builder: (ctx, widget) => Scaffold(
             body: ProgressHUD(
               child: widget,
             ),
           ),
-
           routes: {
             "splash": (context) => Splash(),
             "login": (context) => LoginScreen(),

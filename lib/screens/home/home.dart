@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Card(
             child: InkWell(
           child: Container(
-            height: 370,
+            height: 200,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

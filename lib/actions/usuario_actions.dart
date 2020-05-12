@@ -40,9 +40,9 @@ class AtualizarUsuarioLogado {
   AtualizarUsuarioLogado(this.usuario);
 }
 
-class AtualiarStatusLogin {
+class AtualizarStatusLogin {
   final StatusLogin statusLogin;
 
-  AtualiarStatusLogin(this.statusLogin);
+  AtualizarStatusLogin(this.statusLogin);
 
 }

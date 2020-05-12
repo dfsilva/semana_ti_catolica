@@ -17,15 +17,16 @@ class UsuarioMiddleware extends MiddlewareClass<AppState> {
   @override
   call(Store<AppState> store, action, next) {
     next(action);
+
     if (action is VerificarStatusUsuario) {
-      store.dispatch(AtualiarStatusLogin(StatusLogin.carregando));
+      store.dispatch(AtualizarStatusLogin(StatusLogin.carregando));
       this.usuarioService.obterUsuarioLogado().then((value) {
         if (value != null) {
           store.dispatch(AtualizarUsuarioLogado(value));
-          store.dispatch(AtualiarStatusLogin(StatusLogin.logado));
+          store.dispatch(AtualizarStatusLogin(StatusLogin.logado));
           NavigatorUtils.nav.currentState.pushReplacementNamed("home");
         } else {
-          store.dispatch(AtualiarStatusLogin(StatusLogin.nao_logado));
+          store.dispatch(AtualizarStatusLogin(StatusLogin.nao_logado));
           NavigatorUtils.nav.currentState.pushReplacementNamed("login");
         }
       });
@@ -36,7 +37,7 @@ class UsuarioMiddleware extends MiddlewareClass<AppState> {
         if (value != null) {
           store.dispatch(VerificarStatusUsuario());
         } else {
-          store.dispatch(AtualiarStatusLogin(StatusLogin.nao_logado));
+          store.dispatch(AtualizarStatusLogin(StatusLogin.nao_logado));
           action.onError("Usuário ou senha inválidos");
         }
       });

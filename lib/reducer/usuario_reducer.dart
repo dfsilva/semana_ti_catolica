@@ -4,8 +4,13 @@ import 'package:redux/redux.dart';
 
 final usuarioReducer = combineReducers<UsuarioState>([
   TypedReducer<UsuarioState, AtualizarUsuarioLogado>(_atualizarValorUsuario),
-  TypedReducer<UsuarioState, AtualiarStatusLogin>(_atualizaStatusLogin)
+  TypedReducer<UsuarioState, AtualizarStatusLogin>(_atualizaStatusLogin)
 ]);
 
-UsuarioState _atualizarValorUsuario(UsuarioState state, AtualizarUsuarioLogado action) => state.copyWith(usuario: action.usuario);
-UsuarioState _atualizaStatusLogin(UsuarioState state, AtualiarStatusLogin action) => state.copyWith(statusLogin: action.statusLogin);
+UsuarioState _atualizarValorUsuario(UsuarioState state, AtualizarUsuarioLogado action){
+  return state.copyWith(usuario: action.usuario);
+}
+
+UsuarioState _atualizaStatusLogin(UsuarioState state, AtualizarStatusLogin action){
+  return state.copyWith(statusLogin: action.statusLogin);
+}

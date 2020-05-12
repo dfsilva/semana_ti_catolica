@@ -1,10 +1,12 @@
+import 'package:catolica/actions/atividade_actions.dart';
 import 'package:catolica/domain/atividade.dart';
-import 'package:catolica/service/atividade_service.dart';
-import 'package:catolica/service/usuario_service.dart';
-import 'package:catolica/utils/message_utils.dart';
+import 'package:catolica/domain/usuario.dart';
+import 'package:catolica/state/app_state.dart';
 import 'package:catolica/widgets/form/date_time_form.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
+import 'package:redux/redux.dart';
 
 class AtividadeScreen extends StatefulWidget {
   @override
@@ -45,28 +47,25 @@ class AtividadeScreenState extends State<AtividadeScreen> {
     super.dispose();
   }
 
-  _save() {
+  _save(_ViewModel _viewModel) {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-//      Atividade _atividade = Atividade(
-//          nome: this._nome,
-//          local: this._local,
-//          descricao: this._descricao,
-//          dataHoraInicio: this._dataHoraInicio,
-//          dataHoraFim: this._dataHoraFim,
-//          usuario: this._usuarioService.usuarioStore.usuario.uid);
-//
-//      this._atividadeService.salvar(_atividade).then((value) {
-//        showInfo("Atividade adicionada");
-//        Navigator.of(context).pop();
-//      });
+      Atividade _atividade = Atividade(
+          nome: this._nome,
+          local: this._local,
+          descricao: this._descricao,
+          dataHoraInicio: this._dataHoraInicio,
+          dataHoraFim: this._dataHoraFim,
+          usuario: _viewModel.usuarioLogado.uid);
+
+      _viewModel.adicionar(_atividade);
+
+      Navigator.of(context).pop();
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-
+  _buildBody(_ViewModel _viewModel) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Nova Atividade"),
@@ -220,7 +219,7 @@ class AtividadeScreenState extends State<AtividadeScreen> {
               child: RaisedButton(
                 child: Text("Enviar"),
                 onPressed: () {
-                  this._save();
+                  this._save(_viewModel);
                 },
               ),
             ),
@@ -228,5 +227,28 @@ class AtividadeScreenState extends State<AtividadeScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StoreConnector<AppState, _ViewModel>(
+      converter: (Store<AppState> store) => _ViewModel.create(store),
+      builder: (_, _ViewModel _viewModel) => _buildBody(_viewModel),
+    );
+  }
+}
+
+class _ViewModel {
+  final Usuario usuarioLogado;
+  final Function(Atividade atividade) adicionar;
+
+  _ViewModel({this.usuarioLogado, this.adicionar});
+
+  factory _ViewModel.create(Store<AppState> store) {
+    return _ViewModel(
+        usuarioLogado: store.state.usuarioState.usuario,
+        adicionar: (atividade) {
+          store.dispatch(AdicionarAtividadeAction(atividade));
+        });
   }
 }
