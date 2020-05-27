@@ -16,6 +16,12 @@ abstract class _AtividadeStore with Store {
     atividades.add(atividade);
   }
 
+  @action
+  setAtividades(List<Atividade> atividades) {
+    this.atividades.clear();
+    this.atividades.addAll(atividades);
+  }
+
   @computed
   int get quantidadeAtividades {
     return atividades.length;

@@ -24,6 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     _usuarioService = Provider.of<UsuarioService>(context);
     _atividadeService = Provider.of<AtividadeService>(context);
+
+    _atividadeService.carregarAtividades();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Semana TI Católica 2020"),
@@ -103,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Card(
                 child: InkWell(
               child: Container(
-                height: 370,
+                height: 200,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -124,11 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
                           style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                      child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
-                          style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                    ),
+                    ativade.dataHoraFim != null
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                            child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraFim)}",
+                                style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                          )
+                        : SizedBox.shrink(),
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,

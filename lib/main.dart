@@ -1,4 +1,5 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:catolica/db/DBHelper.dart';
 import 'package:catolica/screens/atividade/atividade.dart';
 import 'package:catolica/screens/auth/login.dart';
 import 'package:catolica/screens/auth/recover.dart';
@@ -20,6 +21,9 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    final DbHelper dbHelper = new DbHelper();
+
     return BotToastInit(
       child: MultiProvider(
         providers: [
@@ -30,7 +34,7 @@ class MyApp extends StatelessWidget {
             },
           ),
           Provider<AtividadeService>(
-            create: (_) => AtividadeService(AtividadeStore()),
+            create: (_) => AtividadeService(AtividadeStore(), dbHelper),
             dispose: (ctx, atividadeService) {
               atividadeService.dispose();
             },

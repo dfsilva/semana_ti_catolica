@@ -47,6 +47,16 @@ mixin _$AtividadeStore on _AtividadeStore, Store {
   }
 
   @override
+  dynamic setAtividades(List<Atividade> atividades) {
+    final _$actionInfo = _$_AtividadeStoreActionController.startAction();
+    try {
+      return super.setAtividades(atividades);
+    } finally {
+      _$_AtividadeStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     final string =
         'atividades: ${atividades.toString()},quantidadeAtividades: ${quantidadeAtividades.toString()}';
