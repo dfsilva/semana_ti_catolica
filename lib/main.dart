@@ -11,6 +11,8 @@ import 'package:catolica/service/usuario_service.dart';
 import 'package:catolica/stores/atividade_store.dart';
 import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/navigator_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,14 +23,13 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     final DbHelper dbHelper = new DbHelper();
-
+    Firestore.instance.settings(persistenceEnabled: true, cacheSizeBytes: -1);
     return BotToastInit(
       child: MultiProvider(
         providers: [
           Provider<UsuarioService>(
-            create: (_) => UsuarioService(UsuarioStore()),
+            create: (_) => UsuarioService(UsuarioStore(), FirebaseAuth.instance, Firestore.instance),
             dispose: (ctx, usuarioService) {
               usuarioService.dispose();
             },

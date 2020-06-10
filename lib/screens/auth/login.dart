@@ -25,19 +25,9 @@ class LoginScreenState extends State<LoginScreen> {
   _login() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
-      try {
-        _usuarioService.entrarComEmailSenha(_email, _senha).then((usuario) {
-          if (usuario == null) {
-            showError("Usuário não cadastrado");
-          }
-        }).catchError((error) {
-          print("Errooooooo!!!!!");
-          showError("Erro ao fazer login");
-        });
-      } catch (e) {
-        showError("Erro ao fazer login");
-      }
+      _usuarioService.entrarComEmailSenha(_email, _senha).catchError((error){
+        showError(error.message);
+      });
     }
   }
 

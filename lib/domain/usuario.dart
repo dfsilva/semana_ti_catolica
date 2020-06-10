@@ -11,6 +11,7 @@ class Usuario {
   }
 
   static fromJson(Map<String, Object> json) {
+    if (json == null) return null;
     return Usuario(uid: json["uid"], nome: json["nome"], email: json["email"], admin: json["admin"] ?? false);
   }
 }

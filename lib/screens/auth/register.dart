@@ -42,11 +42,9 @@ class RegisterScreenState extends State<RegisterScreen> {
   _register() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      _usuarioService.criarUsuario(_nome, _email, _senha).then((usuario) {
-        Navigator.of(context).pushReplacementNamed("home");
-      }).catchError((error) {
-        print("Errooooooo!!!!!");
-        showError("Erro ao fazer login");
+      _usuarioService.criarUsuario(_nome, _email, _senha)
+          .catchError((error) {
+        showError(error.message);
       });
     }
   }

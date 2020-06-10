@@ -1,68 +1,71 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:catolica/domain/usuario.dart';
 import 'package:catolica/stores/usuario_store.dart';
+import 'package:catolica/utils/message_utils.dart';
 import 'package:catolica/utils/navigator_utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UsuarioService {
   final UsuarioStore usuarioStore;
-  StreamSubscription<StatusLogin> _statusLoginSubscription;
-  SharedPreferences _preferences;
+  final FirebaseAuth _auth;
+  final Firestore _firestore;
+  StreamSubscription _authSubscription;
 
-  UsuarioService(this.usuarioStore) {
-    this._statusLoginSubscription = usuarioStore.statusSubject.listen((value) {
-      if (value == StatusLogin.logado) {
-        NavigatorUtils.nav.currentState.pushReplacementNamed("home");
-      } else {
+  UsuarioService(this.usuarioStore, this._auth, this._firestore) {
+    escutarStatusLogin();
+  }
+
+  escutarStatusLogin() {
+    this._authSubscription = _auth.onAuthStateChanged.listen((userData) {
+      if (userData == null) {
+        usuarioStore.setStatusLogin(StatusLogin.nao_logado);
         NavigatorUtils.nav.currentState.pushReplacementNamed("login");
+      } else {
+        usuarioStore.setStatusLogin(StatusLogin.logado);
+        obterUsuarioPorEmail(userData.email).then((fuser) {
+          usuarioStore.setUsuario(fuser);
+          NavigatorUtils.nav.currentState.pushReplacementNamed("home");
+        }).catchError((error) {
+          showError("Erro ao recuperar dados do usuario");
+          logout();
+        });
       }
     });
-    SharedPreferences.getInstance().then((value) {
-      _preferences = value;
-    });
   }
 
-  Future<Usuario> entrarComEmailSenha(String email, String senha) async {
-    Usuario usuarioLogado = Usuario(nome: "Diego Ferreira", email: email);
-    _preferences.setString("usuario_logado", jsonEncode(usuarioLogado.toJson()));
-    usuarioStore.setUsuario(usuarioLogado);
-    usuarioStore.setStatusLogin(StatusLogin.logado);
-    return Future.value(usuarioLogado);
+  Future<AuthResult> entrarComEmailSenha(String email, String senha) async {
+    return _auth.signInWithEmailAndPassword(email: email, password: senha);
   }
 
-  Future<bool> recuperarSenha(String email) async {
-    return Future.delayed(Duration(seconds: 5), () {
-      return Future.value(true);
-    });
+  Future<void> recuperarSenha(String email) async {
+    return _auth.sendPasswordResetEmail(email: email);
   }
 
-  Future<Usuario> criarUsuario(String nome, String email, String senha) {
-    return Future.value(Usuario(nome: nome, email: email));
+  Future<void> criarUsuario(String nome, String email, String senha) {
+    _authSubscription?.cancel();
+    return _auth.createUserWithEmailAndPassword(email: email, password: senha).then((authResult) async {
+      await _firestore
+          .collection("usuarios")
+          .document(authResult.user.uid)
+          .setData(Usuario(uid: authResult.user.uid, email: email, admin: false, nome: nome).toJson());
+    }).whenComplete(() => escutarStatusLogin());
+  }
+
+  Future<Usuario> obterUsuarioPorEmail(String email) {
+    return _firestore
+        .collection("usuarios")
+        .where("email", isEqualTo: email)
+        .getDocuments()
+        .then((qsnp) => Usuario.fromJson(qsnp.documents?.first?.data));
   }
 
   Future<void> logout() {
-    _preferences.remove("usuario_logado");
-    usuarioStore.setStatusLogin(StatusLogin.nao_logado);
-  }
-
-  Future<Usuario> verificarUsuarioAutenticado() async {
-    return Future.delayed(Duration(seconds: 5), () {
-      String usuarioStr = _preferences.getString("usuario_logado");
-      if (usuarioStr != null) {
-        Usuario usuarioLogado = Usuario.fromJson(jsonDecode(usuarioStr));
-        usuarioStore.setUsuario(usuarioLogado);
-        usuarioStore.setStatusLogin(StatusLogin.logado);
-        return usuarioLogado;
-      } else {
-        usuarioStore.setStatusLogin(StatusLogin.nao_logado);
-        return null;
-      }
-    });
+    _auth.signOut();
   }
 
   void dispose() {
-    _statusLoginSubscription.cancel();
+    _authSubscription?.cancel();
   }
 }

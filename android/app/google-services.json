@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "639941208167",
+    "firebase_url": "https://semana-ti-catolica.firebaseio.com",
+    "project_id": "semana-ti-catolica",
+    "storage_bucket": "semana-ti-catolica.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639941208167:android:9c7597a2b2752c9fe80cc2",
+        "android_client_info": {
+          "package_name": "br.ucb.semana.ti.catolica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639941208167-hs3l5vmoel4qbh1akt3adq78h04l9rsp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.ucb.semana.ti.catolica",
+            "certificate_hash": "cfb73268b49e756c95aa1567c515df593c04e0ce"
+          }
+        },
+        {
+          "client_id": "639941208167-ppetoatiegm6at5p5r6r2pvgomqj4kcq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjK4o9tgyA_6KYIjAEd4YA0uDPJeIiO4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639941208167-ppetoatiegm6at5p5r6r2pvgomqj4kcq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
