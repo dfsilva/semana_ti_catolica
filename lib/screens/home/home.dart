@@ -90,13 +90,34 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      body: _listarAtividadesFuture(),
+      body: _listaAtividades(),
     );
   }
 
   _listarAtividadesFuture() {
     return FutureBuilder(
       future: _atividadeService.carregarAtividades(),
+      builder: (context, AsyncSnapshot<List<Atividade>> snp) {
+        if (!snp.hasData) {
+          return Center(
+            child: Text("Carregando..."),
+          );
+        }
+
+        if (snp.hasError) {
+          return Center(
+            child: Text("Erro ao carregar atividades..."),
+          );
+        }
+
+        return renderList(snp.data);
+      },
+    );
+  }
+
+  _listarAtividadesStream() {
+    return StreamBuilder(
+      stream: _atividadeService.atividadesStream(),
       builder: (context, AsyncSnapshot<List<Atividade>> snp) {
         if (!snp.hasData) {
           return Center(

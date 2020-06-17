@@ -40,16 +40,19 @@ class _MyAppState extends State<MyApp> {
             create: (_) => HudStore(),
             lazy: false,
           ),
-          ProxyProvider<HudStore, UsuarioService>(
-            update: (_, hudStore, __) => UsuarioService(UsuarioStore(), FirebaseAuth.instance, Firestore.instance, hudStore),
+          Provider<UsuarioStore>(
+            create: (_) => UsuarioStore(),
+            lazy: false,
+          ),
+          ProxyProvider2<HudStore, UsuarioStore, UsuarioService>(
+            update: (_, hudStore, usuarioStore, __) => UsuarioService(usuarioStore, FirebaseAuth.instance, Firestore.instance, hudStore),
             lazy: false,
             dispose: (_, usuarioService) {
               usuarioService.dispose();
             },
           ),
-          ProxyProvider<HudStore, AtividadeService>(
-            update: (_, hudStore, __) => AtividadeService(AtividadeStore(), dbHelper, Firestore.instance, hudStore),
-            lazy: false,
+          ProxyProvider2<HudStore, UsuarioStore, AtividadeService>(
+            update: (_, hudStore, usuarioStore, __) => AtividadeService(AtividadeStore(), dbHelper, Firestore.instance, hudStore, usuarioStore),
             dispose: (ctx, atividadeService) {
               atividadeService.dispose();
             },

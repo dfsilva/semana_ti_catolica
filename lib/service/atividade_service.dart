@@ -4,6 +4,7 @@ import 'package:catolica/db/DBHelper.dart';
 import 'package:catolica/domain/atividade.dart';
 import 'package:catolica/stores/atividade_store.dart';
 import 'package:catolica/stores/hud_store.dart';
+import 'package:catolica/stores/usuario_store.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AtividadeService {
@@ -11,8 +12,14 @@ class AtividadeService {
   final DbHelper dbHelper;
   final Firestore _firestore;
   final HudStore _hudStore;
+  final UsuarioStore _usuarioStore;
+  StreamSubscription _atividadesStream;
 
-  AtividadeService(this.atividadeStore, this.dbHelper, this._firestore, this._hudStore);
+  AtividadeService(this.atividadeStore, this.dbHelper, this._firestore, this._hudStore, this._usuarioStore) {
+    this._atividadesStream = atividadesStream().listen((atividades) {
+      atividadeStore.setAtividades(atividades);
+    });
+  }
 
   Future<List<Atividade>> carregarAtividades() async {
 //    return dbHelper.getDatabase().then((db) {
@@ -24,12 +31,19 @@ class AtividadeService {
 //      });
 //    });
 
-//    this._hudStore.show("Carregando atividades...");
     return _firestore
         .collection(Atividade.TABLE_NAME)
+        .where("usuario", isEqualTo: _usuarioStore.usuario.uid)
         .getDocuments()
         .then((qsnp) => qsnp.documents.map((document) => Atividade.fromMap(document.data)).toList());
-//        .whenComplete(() => this._hudStore.hide());
+  }
+
+  Stream<List<Atividade>> atividadesStream() {
+    return _firestore
+        .collection(Atividade.TABLE_NAME)
+        .where("usuario", isEqualTo: _usuarioStore.usuario.uid)
+        .snapshots()
+        .map((qsnp) => qsnp.documents.map((document) => Atividade.fromMap(document.data)).toList());
   }
 
   Future<Atividade> salvar(Atividade atividade) async {
@@ -41,12 +55,16 @@ class AtividadeService {
 //      conflictAlgorithm: ConflictAlgorithm.replace,
 //    );
 
+    _hudStore.show("Adicionando atividade...");
     DocumentReference atividadeRef = _firestore.collection(Atividade.TABLE_NAME).document();
     Atividade novaAtividade = atividade.copyWith(id: atividadeRef.documentID);
     atividadeStore.adicionarAtividade(novaAtividade);
 
-    return atividadeRef.setData(novaAtividade.toMap()).then((_) => novaAtividade);
+    return atividadeRef.setData(novaAtividade.toMap()).then((_) => novaAtividade)
+        .whenComplete(() => _hudStore.hide());
   }
 
-  void dispose() {}
+  void dispose() {
+    this._atividadesStream.cancel();
+  }
 }
