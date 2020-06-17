@@ -44,17 +44,23 @@ class UsuarioService {
   }
 
   Future<void> recuperarSenha(String email) async {
-    return _auth.sendPasswordResetEmail(email: email);
+    _hudStore.show("Enviando...");
+    return _auth.sendPasswordResetEmail(email: email)
+        .whenComplete(() => _hudStore.hide());
   }
 
   Future<void> criarUsuario(String nome, String email, String senha) {
+    _hudStore.show("Cadastrando...");
     _authSubscription?.cancel();
     return _auth.createUserWithEmailAndPassword(email: email, password: senha).then((authResult) async {
       await _firestore
           .collection("usuarios")
           .document(authResult.user.uid)
           .setData(Usuario(uid: authResult.user.uid, email: email, admin: false, nome: nome).toJson());
-    }).whenComplete(() => escutarStatusLogin());
+    }).whenComplete((){
+      escutarStatusLogin();
+      _hudStore.hide();
+    });
   }
 
   Future<Usuario> obterUsuarioPorEmail(String email) {
