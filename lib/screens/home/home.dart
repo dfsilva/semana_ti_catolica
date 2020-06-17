@@ -1,3 +1,4 @@
+import 'package:catolica/domain/atividade.dart';
 import 'package:catolica/service/atividade_service.dart';
 import 'package:catolica/service/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +90,28 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      body: _listaAtividades(),
+      body: _listarAtividadesFuture(),
+    );
+  }
+
+  _listarAtividadesFuture() {
+    return FutureBuilder(
+      future: _atividadeService.carregarAtividades(),
+      builder: (context, AsyncSnapshot<List<Atividade>> snp) {
+        if (!snp.hasData) {
+          return Center(
+            child: Text("Carregando..."),
+          );
+        }
+
+        if (snp.hasError) {
+          return Center(
+            child: Text("Erro ao carregar atividades..."),
+          );
+        }
+
+        return renderList(snp.data);
+      },
     );
   }
 
@@ -101,76 +123,80 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text("Sem atividades para exibir"),
           );
         }
-        return ListView(
-          children: _atividadeService.atividadeStore.atividades.map((ativade) {
-            return Card(
-                child: InkWell(
-              child: Container(
-                height: 200,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-//                      Container(width: double.maxFinite, height: 150, child: Image.network(ativade.foto, fit: BoxFit.cover)),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                      child: Text(ativade.nome, style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                      child: Text(ativade.descricao, style: TextStyle(color: Colors.black54), overflow: TextOverflow.ellipsis, maxLines: 4),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                      child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
-                          style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                    ),
-                    ativade.dataHoraFim != null
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                            child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraFim)}",
-                                style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                          )
-                        : SizedBox.shrink(),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Observer(
-                            builder: (ctx) {
-                              if (_usuarioService.usuarioStore.usuario.admin) {
-                                return InkWell(
-                                  onTap: () {},
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: Text("Editar"),
-                                  ),
-                                );
-                              } else {
-                                return SizedBox.shrink();
-                              }
-                            },
-                          ),
-                          InkWell(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Text("Avise-me"),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ));
-          }).toList(),
-        );
+        return renderList(_atividadeService.atividadeStore.atividades);
       },
+    );
+  }
+
+  renderList(List<Atividade> atividades) {
+    return ListView(
+      children: atividades.map((ativade) {
+        return Card(
+            child: InkWell(
+          child: Container(
+            height: 200,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+//                      Container(width: double.maxFinite, height: 150, child: Image.network(ativade.foto, fit: BoxFit.cover)),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text(ativade.nome, style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text(ativade.descricao, style: TextStyle(color: Colors.black54), overflow: TextOverflow.ellipsis, maxLines: 4),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                  child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
+                      style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                ),
+                ativade.dataHoraFim != null
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                        child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraFim)}",
+                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                      )
+                    : SizedBox.shrink(),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Observer(
+                        builder: (ctx) {
+                          if (_usuarioService.usuarioStore.usuario.admin) {
+                            return InkWell(
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Text("Editar"),
+                              ),
+                            );
+                          } else {
+                            return SizedBox.shrink();
+                          }
+                        },
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Text("Avise-me"),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ));
+      }).toList(),
     );
   }
 }

@@ -1,7 +1,7 @@
 class Atividade {
-  static const String TABLE_NAME = "atividade";
+  static const String TABLE_NAME = "atividades";
 
-  final int id;
+  final String id;
   final String nome;
   final String descricao;
   final String local;
@@ -37,7 +37,7 @@ class Atividade {
         usuario: map["usuario"]);
   }
 
-  copyWith({int id}) {
+  Atividade copyWith({String id}) {
     return Atividade(
         id: id,
         nome: this.nome,

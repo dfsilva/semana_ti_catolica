@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:catolica/domain/usuario.dart';
+import 'package:catolica/stores/hud_store.dart';
 import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/message_utils.dart';
 import 'package:catolica/utils/navigator_utils.dart';
@@ -11,9 +12,10 @@ class UsuarioService {
   final UsuarioStore usuarioStore;
   final FirebaseAuth _auth;
   final Firestore _firestore;
+  final HudStore _hudStore;
   StreamSubscription _authSubscription;
 
-  UsuarioService(this.usuarioStore, this._auth, this._firestore) {
+  UsuarioService(this.usuarioStore, this._auth, this._firestore, this._hudStore) {
     escutarStatusLogin();
   }
 
@@ -36,7 +38,9 @@ class UsuarioService {
   }
 
   Future<AuthResult> entrarComEmailSenha(String email, String senha) async {
-    return _auth.signInWithEmailAndPassword(email: email, password: senha);
+    _hudStore.show("Entrando...");
+    return _auth.signInWithEmailAndPassword(email: email, password: senha)
+        .whenComplete(() => _hudStore.hide());
   }
 
   Future<void> recuperarSenha(String email) async {

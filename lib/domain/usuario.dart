@@ -1,4 +1,6 @@
 class Usuario {
+  static const String TABLE_NAME = "usuarios";
+
   final String uid;
   final String nome;
   final String email;
