@@ -18,6 +18,33 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-firestore.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyDz6yrHVGzvsqtY8G5Ikj2pfgLyzLa02Dk",
+    authDomain: "semana-ti-catolica.firebaseapp.com",
+    databaseURL: "https://semana-ti-catolica.firebaseio.com",
+    projectId: "semana-ti-catolica",
+    storageBucket: "semana-ti-catolica.appspot.com",
+    messagingSenderId: "639941208167",
+    appId: "1:639941208167:web:e5613e006579f69ce80cc2",
+    measurementId: "G-TF9RMN3P7Q"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
+
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->

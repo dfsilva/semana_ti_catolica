@@ -18,6 +18,12 @@ dependencies:
 
   firebase_auth: 0.16.1
   cloud_firestore: 0.13.6
+  firebase_storage: 3.1.6
+
+  cached_network_image: 2.2.0+1
+
+  image_picker: 0.6.7+2
+  image_cropper: 1.2.3
 
   shared_preferences: 0.5.6+3
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:catolica/domain/atividade.dart';
 import 'package:catolica/service/atividade_service.dart';
 import 'package:catolica/service/usuario_service.dart';
@@ -52,11 +53,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (ctx) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                      width: 60,
-                      height: 60,
-                      color: Colors.white,
-                    ),
+                    this._usuarioService.usuarioStore.usuario.foto != null
+                        ? CachedNetworkImage(
+                            imageUrl: this._usuarioService.usuarioStore.usuario.foto,
+                            imageBuilder: (_, imageProvider) {
+                              return Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    image: DecorationImage(image: imageProvider, fit: BoxFit.fill)),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: 60,
+                            height: 60,
+                            child: Icon(Icons.person, size: 40),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+                          ),
                     SizedBox(
                       height: 10,
                     ),
