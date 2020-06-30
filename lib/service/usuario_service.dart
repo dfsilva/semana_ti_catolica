@@ -50,8 +50,7 @@ class UsuarioService {
   }
 
   Stream<Usuario> usuarioStream(Usuario usuario) {
-    return _firestore.document("usuarios/${usuario.uid}")
-        .snapshots().map((event) => Usuario.fromJson(event.data));
+    return _firestore.document("usuarios/${usuario.uid}").snapshots().map((event) => Usuario.fromJson(event.data));
   }
 
   Future<AuthResult> entrarComEmailSenha(String email, String senha) async {
@@ -83,6 +82,17 @@ class UsuarioService {
           .setData(Usuario(uid: authResult.user.uid, email: email, admin: false, nome: nome).toJson());
     }).whenComplete(() {
       escutarStatusLogin();
+      _hudStore.hide();
+    });
+  }
+
+  Future<void> alterarUsuario(Usuario usuario, {File file}) {
+    _hudStore.show("Alterando...");
+    DocumentReference dr = _firestore.document("usuarios/${usuario.uid}");
+    return dr.setData(usuario.toJson(), merge: true).whenComplete(() {
+      if (file != null) {
+        enviarFoto(usuario.uid, file);
+      }
       _hudStore.hide();
     });
   }

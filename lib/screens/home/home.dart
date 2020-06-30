@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:catolica/domain/atividade.dart';
+import 'package:catolica/screens/profile/edit.dart';
 import 'package:catolica/service/atividade_service.dart';
 import 'package:catolica/service/usuario_service.dart';
 import 'package:flutter/material.dart';
@@ -34,13 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Semana TI Católica 2020"),
         actions: [
           Observer(
-            builder: (ctx) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Text(
-                _atividadeService.atividadeStore.quantidadeAtividades.toString(),
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
+            builder: (ctx) =>
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Text(
+                    _atividadeService.atividadeStore.quantidadeAtividades.toString(),
+                    style: TextStyle(fontSize: 30),
+                  ),
+                ),
           )
         ],
       ),
@@ -50,35 +52,55 @@ class _HomeScreenState extends State<HomeScreen> {
             DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue[800]),
               child: Observer(
-                builder: (ctx) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    this._usuarioService.usuarioStore.usuario.foto != null
-                        ? CachedNetworkImage(
-                            imageUrl: this._usuarioService.usuarioStore.usuario.foto,
-                            imageBuilder: (_, imageProvider) {
-                              return Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
-                                    image: DecorationImage(image: imageProvider, fit: BoxFit.fill)),
-                              );
-                            },
-                          )
-                        : Container(
-                            width: 60,
-                            height: 60,
-                            child: Icon(Icons.person, size: 40),
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+                builder: (ctx) =>
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        this._usuarioService.usuarioStore.usuario.foto != null
+                            ? CachedNetworkImage(
+                          imageUrl: this._usuarioService.usuarioStore.usuario.foto,
+                          imageBuilder: (_, imageProvider) {
+                            return Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50), image: DecorationImage(image: imageProvider, fit: BoxFit.fill)),
+                            );
+                          },
+                        )
+                            : Container(
+                          width: 60,
+                          height: 60,
+                          child: Icon(Icons.person, size: 40),
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(20))),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(this._usuarioService.usuarioStore.usuario.nome, style: TextStyle(color: Colors.white)),
+                                  Text(this._usuarioService.usuarioStore.usuario.email, style: TextStyle(color: Colors.white)),
+                                ],
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.edit, color: Colors.white,),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (_) => EditProfileScreen(usuario: this._usuarioService.usuarioStore.usuario)
+                                  ));
+                                },
+                              )
+                            ],
                           ),
-                    SizedBox(
-                      height: 10,
+                        )
+                      ],
                     ),
-                    Text(this._usuarioService.usuarioStore.usuario.nome, style: TextStyle(color: Colors.white)),
-                    Text(this._usuarioService.usuarioStore.usuario.email, style: TextStyle(color: Colors.white))
-                  ],
-                ),
               ),
             ),
             ListTile(
@@ -169,69 +191,69 @@ class _HomeScreenState extends State<HomeScreen> {
       children: atividades.map((ativade) {
         return Card(
             child: InkWell(
-          child: Container(
-            height: 200,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              child: Container(
+                height: 200,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
 //                      Container(width: double.maxFinite, height: 150, child: Image.network(ativade.foto, fit: BoxFit.cover)),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                  child: Text(ativade.nome, style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                  child: Text(ativade.descricao, style: TextStyle(color: Colors.black54), overflow: TextOverflow.ellipsis, maxLines: 4),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                  child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
-                      style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                ),
-                ativade.dataHoraFim != null
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                        child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraFim)}",
-                            style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
-                      )
-                    : SizedBox.shrink(),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Observer(
-                        builder: (ctx) {
-                          if (_usuarioService.usuarioStore.usuario.admin) {
-                            return InkWell(
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Text("Editar"),
-                              ),
-                            );
-                          } else {
-                            return SizedBox.shrink();
-                          }
-                        },
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                      child: Text(ativade.nome, style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                      child: Text(ativade.descricao, style: TextStyle(color: Colors.black54), overflow: TextOverflow.ellipsis, maxLines: 4),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                      child: Text("Início: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraInicio)}",
+                          style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                    ),
+                    ativade.dataHoraFim != null
+                        ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+                      child: Text("Término: ${DateFormat("dd/MM/yyyy HH:mm").format(ativade.dataHoraFim)}",
+                          style: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold)),
+                    )
+                        : SizedBox.shrink(),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Observer(
+                            builder: (ctx) {
+                              if (_usuarioService.usuarioStore.usuario.admin) {
+                                return InkWell(
+                                  onTap: () {},
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Text("Editar"),
+                                  ),
+                                );
+                              } else {
+                                return SizedBox.shrink();
+                              }
+                            },
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Text("Avise-me"),
+                            ),
+                          )
+                        ],
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Text("Avise-me"),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ));
+                    )
+                  ],
+                ),
+              ),
+            ));
       }).toList(),
     );
   }

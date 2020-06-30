@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "semana-ti-catolica",
+  "private_key_id": "db9f169fed7c4a648cf1e8b4076e55f4913f20c7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQClT1mv5b5LPr4A\nLTGxVZmejrmZVkOp30/ZDbj3YzMXoxWlAFM+6bRVXOXY4rwSOkXyrUT7grt4tu1b\nVNCGES0c0+o5+GRIX3DkJLpyq3T9M5eR+uEKlo/eAAQSM3GRzJJvmU8F/R+PSHEn\nuePlp6BHHeOE+ZEHaNJ87wvFdXxhRTIz6Y0FFm5M+/EzWjT/vF9bFQe84RfmJiNc\njj8cUSA0RaEN/+KyDDZL+yzr16PY2I/Z/roSvmnAw7n2TN1p6bforNW9fQhe56qv\nMtjMFBZhXNS/2LzP5UkVDD1TVkAebEGv2OQgI2NDiOLGttdEFJIBCZWgSrV/Tqbf\njt2QJwhRAgMBAAECggEADTeOUk7eQ34fWxyB7v2q+AdNjdXcuFflVpN/LNFqv/qv\nM/d2EG9HVrVkH66GLrdnyQ7DN5BE7LKEgQNDnlqAdr/3R94FJ5ew6x7IJPuyMX3m\n4hoy1MHDvDJYYPupuohmk2NosvABbldyi6R0VRPtT85TFvpMtxDRloFW2blqYczx\nYYR0Z+Pm1cF25DyDaBaLjmeT8BHIaJbGaGrh5Wf6Xdic7HtrPVQ2hBYOxfiBu/b/\nOqIb8Ih6hXhlisORDpixeNKZXaWiXGkonHmDF7HRrIXnHMlCbSqWqknEpEGkbkqY\nVb80CQW/eVxr1eUVDr+gLf93peUPU/v1MIMVVJ/OeQKBgQDgMFIUpCWH8tO7N8Px\nzKEYidDHblx+iqvMMC4jnYj9lBppMu5cQREMx7d3U3QDtq9F5wn2ZzY2kOF4owev\notKur8uI+tuzMUmqwCdi0ihfAV3c1+5tu/i6j8FV+3IeBD3N41gLJrJirfn/QbuE\nG+eYX9b6IiDfwjJTovidUoILaQKBgQC8xEBrIL9TA0IHvirQlZWkV74eSI8Xi/iJ\nOrA0M8zE9W+cFFXlA8Jq0Qtd5ap2hxlVf0XQJuXS7kYnNC4iMmonwBkgiJCP/h85\nHpT0/4mVPpY7iCncPsB3WC7uTdsMjck3XYyW+6/qu+1z0BPfClDNaKn5XtlEMbQ8\nGtHy17GAqQKBgQC/7j5nM3x6HhbMolpbaU/FvT8DbeU75KZd4iWuEhGU3rWZuKO+\nUWoyYc0dGFIrV7xIgRrTW9ta7cBKUnCjGid6rD/5HqL2j0y9JVLS1I8Bfx8Hkcmr\nIpE3zxi67tDtB76NxIO80D1KJB3yPSk3Wdh1aB+Y95zjU9NYLR7hOSDieQKBgFsq\nIL5cM2qBAUvCAOV5yKp1IcF4Y3sIw4BrEpwzhCp/Kmbjv1P6S9PQn7+6YmgZ+Rc8\nf1f24TnMj57xaXJkjLYj5T68Fa0lGqk4ZtIn86dbcazQpv7SY5t/wDKg8TCP7WTK\nzlJAvYYNOrGbBW3LipiZerWPpDh2FMiOX2T73KL5AoGBAMtHCS/zVGpKiYzApmZg\njfwAsTe53aq78Rx60UT4GMntnP3skbN7qRyMGhKNlZRsmzn+l8/iSvLBJA43Jwj7\ni3j1k7aiRizhFoAQL4bJjgYWBG3sEPREtQlgUu5/KNa1UXVo7FlsLA8NJb1wbGOb\nv/aLeqzJVWOsH26WrnGuyZqX\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-qzu78@semana-ti-catolica.iam.gserviceaccount.com",
+  "client_id": "117535491791823497973",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-qzu78%40semana-ti-catolica.iam.gserviceaccount.com"
+}

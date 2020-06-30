@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:catolica/domain/usuario.dart';
 import 'package:catolica/service/usuario_service.dart';
 import 'package:catolica/utils/message_utils.dart';
 import 'package:flutter/material.dart';
@@ -7,53 +8,50 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class RegisterScreen extends StatefulWidget {
+class EditProfileScreen extends StatefulWidget {
+  final Usuario usuario;
+
+  const EditProfileScreen({Key key, this.usuario}) : super(key: key);
+
   @override
-  RegisterScreenState createState() => RegisterScreenState();
+  EditProfileScreenState createState() => EditProfileScreenState();
 }
 
-class RegisterScreenState extends State<RegisterScreen> {
+class EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scafoldKey = GlobalKey<ScaffoldState>();
-
   final picker = ImagePicker();
 
   String _imagePath = "";
-
   UsuarioService _usuarioService;
 
-  bool _showPassword = false;
-
-  String _nome;
-  String _email;
-  String _senha;
+  Usuario _usuario;
 
   FocusNode _focusNome;
   FocusNode _focusEmail;
-  FocusNode _focusSenha;
 
   @override
   void initState() {
     super.initState();
     this._focusNome = FocusNode();
     this._focusEmail = FocusNode();
-    this._focusSenha = FocusNode();
+    _usuario = widget.usuario;
   }
 
   @override
   void dispose() {
     this._focusNome.dispose();
     this._focusEmail.dispose();
-    this._focusSenha.dispose();
 
     super.dispose();
   }
 
-  _register() {
+  _alterar() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
-      _usuarioService.criarUsuario(_nome, _email, _senha, File(_imagePath)).catchError((error) {
+      _usuarioService.alterarUsuario(this._usuario, file: _imagePath.isNotEmpty ? File(_imagePath) : null).then((value) {
+        Navigator.of(context).pop();
+      }).catchError((error) {
         showError(error.message);
       });
     }
@@ -157,7 +155,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       key: _scafoldKey,
       appBar: AppBar(
-        title: Text("Cadastrar-se"),
+        title: Text("Editar usuário"),
       ),
       body: Form(
         key: _formKey,
@@ -173,13 +171,23 @@ class RegisterScreenState extends State<RegisterScreen> {
                 child: Container(
                   height: 100,
                   width: 100,
-                  child: _imagePath.isEmpty
+                  child: _imagePath.isEmpty && (_usuario.foto == null || _usuario.foto.isEmpty)
                       ? Icon(Icons.camera_alt)
-                      : Image.file(
-                          File(_imagePath),
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: _imagePath.isNotEmpty
+                              ? Image.file(
+                                  File(_imagePath),
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(
+                                  _usuario.foto,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                   decoration: BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.circular(100)),
                 ),
@@ -192,6 +200,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                 textInputAction: TextInputAction.next,
                 autofocus: true,
                 focusNode: this._focusNome,
+                initialValue: this._usuario.nome,
                 validator: (nome) {
                   if (nome.isEmpty) {
                     return "Informe o nome";
@@ -203,7 +212,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                   this._focusEmail.requestFocus();
                 },
                 onSaved: (nome) {
-                  this._nome = nome;
+                  this._usuario = this._usuario.copyWith(nome: nome);
                 },
                 decoration: InputDecoration(hintText: "nome", labelText: "nome", icon: Icon(Icons.account_box)),
               ),
@@ -214,6 +223,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                 keyboardType: TextInputType.emailAddress,
                 focusNode: _focusEmail,
                 textInputAction: TextInputAction.next,
+                initialValue: _usuario.email,
+                enabled: false,
                 validator: (email) {
                   if (email.isEmpty) {
                     return "Informe o email.";
@@ -222,56 +233,19 @@ class RegisterScreenState extends State<RegisterScreen> {
                 },
                 onFieldSubmitted: (nome) {
                   this._focusEmail.unfocus();
-                  this._focusSenha.requestFocus();
                 },
                 onSaved: (email) {
-                  this._email = email;
+                  this._usuario = this._usuario.copyWith(email: email);
                 },
                 decoration: InputDecoration(hintText: "email", labelText: "email", icon: Icon(Icons.email)),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: TextFormField(
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.send,
-                focusNode: _focusSenha,
-                validator: (senha) {
-                  if (senha.isEmpty) {
-                    return "Informe a senha.";
-                  }
-                  if (senha.length < 6) {
-                    return "A senha deve conter mais de 6 caracteres.";
-                  }
-                  return null;
-                },
-                onFieldSubmitted: (nome) {
-                  this._focusSenha.unfocus();
-                  _register();
-                },
-                onSaved: (senha) {
-                  this._senha = senha;
-                },
-                decoration: InputDecoration(
-                    hintText: "senha",
-                    labelText: "senha",
-                    icon: Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                        icon: Icon(_showPassword ? Icons.visibility_off : Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            this._showPassword = !_showPassword;
-                          });
-                        })),
-                obscureText: !_showPassword,
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.only(top: 30, left: 10, right: 10, bottom: 5),
               child: RaisedButton(
-                child: Text("Enviar"),
+                child: Text("Alterar"),
                 onPressed: () {
-                  _register();
+                  _alterar();
                 },
               ),
             ),

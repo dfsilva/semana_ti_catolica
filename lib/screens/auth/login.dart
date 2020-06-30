@@ -17,9 +17,22 @@ class LoginScreenState extends State<LoginScreen> {
   String _email;
   String _senha;
 
+  FocusNode _emailFocusNode;
+  FocusNode _senhaFocusNode;
+
   @override
   initState() {
     super.initState();
+
+    _emailFocusNode = new FocusNode();
+    _senhaFocusNode = new FocusNode();
+  }
+
+  @override
+  dispose(){
+    _emailFocusNode.dispose();
+    _senhaFocusNode.dispose();
+    super.dispose();
   }
 
   _login() {
@@ -55,7 +68,13 @@ class LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
                       autofocus: true,
+                      focusNode: _emailFocusNode,
+                      onFieldSubmitted: (value){
+                        _emailFocusNode.unfocus();
+                        _senhaFocusNode.requestFocus();
+                      },
                       validator: (email) {
                         if (email.isEmpty) {
                           return "Informe o email.";
@@ -72,6 +91,11 @@ class LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     child: TextFormField(
                       keyboardType: TextInputType.text,
+                      focusNode: _senhaFocusNode,
+                      onFieldSubmitted: (value){
+                        _senhaFocusNode.unfocus();
+                        _login();
+                      },
                       validator: (senha) {
                         if (senha.isEmpty) {
                           return "Informe a senha.";

@@ -21,4 +21,14 @@ class Usuario {
         admin: json["admin"] ?? false,
         foto: json["foto"]);
   }
+
+  Usuario copyWith({String uid, String nome, String email, bool admin, String foto}) {
+    return Usuario(
+        uid: uid ?? this.uid,
+        nome: nome ?? this.nome,
+        email: email ?? this.email,
+        admin: admin != null ? admin : this.admin,
+        foto: foto ?? this.foto
+    );
+  }
 }
