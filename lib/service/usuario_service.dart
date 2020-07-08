@@ -7,7 +7,9 @@ import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/message_utils.dart';
 import 'package:catolica/utils/navigator_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 
@@ -16,11 +18,12 @@ class UsuarioService {
   final FirebaseAuth _auth;
   final Firestore _firestore;
   final HudStore _hudStore;
+  final FirebaseMessaging _firebaseMessaging;
 
   StreamSubscription _authSubscription;
   StreamSubscription _userDataSubscription;
 
-  UsuarioService(this.usuarioStore, this._auth, this._firestore, this._hudStore) {
+  UsuarioService(this.usuarioStore, this._auth, this._firestore, this._hudStore, this._firebaseMessaging) {
     escutarStatusLogin();
   }
 
@@ -33,6 +36,7 @@ class UsuarioService {
         usuarioStore.setStatusLogin(StatusLogin.logado);
         obterUsuarioPorEmail(userData.email).then((fuser) {
           usuarioStore.setUsuario(fuser);
+          _registerFcmToken(fuser);
           escutarDadosUsuario(fuser);
           NavigatorUtils.nav.currentState.pushReplacementNamed("home");
         }).catchError((error) {
@@ -112,5 +116,59 @@ class UsuarioService {
   void dispose() {
     _authSubscription?.cancel();
     _userDataSubscription?.cancel();
+  }
+
+  Future<void> _registerFcmToken(Usuario usuario) {
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.getToken().then((token) async {
+      _firestore.collection("usuarios/${usuario.uid}/devices")
+          .where("fcmToken", isEqualTo: token).getDocuments().then((querySnp) async {
+        if (querySnp.documents.isEmpty) {
+          await _createFcmToken(usuario, token);
+        } else {
+          await _updateFcmToken(usuario, token, querySnp.documents.first.documentID);
+        }
+      });
+    });
+  }
+
+  Future _createFcmToken(Usuario usuario, String token) async {
+    DocumentReference dr = _firestore.collection("usuarios/${usuario.uid}/devices").document();
+    Map<String, dynamic> deviceData = Map<String, dynamic>();
+    deviceData["fcmToken"] = token;
+    deviceData["created"] = DateTime.now();
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceData["model"] = androidInfo.model;
+      deviceData["so"] = "android";
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceData["model"] = iosInfo.utsname.machine;
+      deviceData["so"] = "ios";
+    }
+    dr.setData(deviceData);
+  }
+
+  Future _updateFcmToken(Usuario usuario, String token, String docId) async {
+    DocumentReference dr = _firestore.collection("usuarios/${usuario.uid}/devices").document(docId);
+    Map<String, dynamic> deviceData = Map<String, dynamic>();
+    deviceData["fcmToken"] = token;
+    deviceData["created"] = DateTime.now();
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceData["model"] = androidInfo.model;
+      deviceData["so"] = "android";
+    }
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceData["model"] = iosInfo.utsname.machine;
+      deviceData["so"] = "ios";
+    }
+    dr.setData(deviceData, merge: true);
   }
 }

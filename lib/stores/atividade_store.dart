@@ -1,5 +1,4 @@
 import 'package:catolica/domain/atividade.dart';
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 part 'atividade_store.g.dart';
@@ -7,19 +6,18 @@ part 'atividade_store.g.dart';
 class AtividadeStore = _AtividadeStore with _$AtividadeStore;
 
 abstract class _AtividadeStore with Store {
-
   @observable
-  ObservableList<Atividade> atividades = List<Atividade>().asObservable();
+  ObservableMap<String, Atividade> atividades = Map<String, Atividade>().asObservable();
 
   @action
-  adicionarAtividade(Atividade atividade) {
-    atividades.add(atividade);
+  setarAtividade(Atividade atividade) {
+    atividades[atividade.id] = atividade;
   }
 
   @action
   setAtividades(List<Atividade> atividades) {
     this.atividades.clear();
-    this.atividades.addAll(atividades);
+    this.atividades = Map<String, Atividade>.fromIterable(atividades, key: (el) => el.id, value: (el) => el).asObservable();
   }
 
   @computed

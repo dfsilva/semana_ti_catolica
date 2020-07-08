@@ -89,11 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                               IconButton(
-                                icon: Icon(Icons.edit, color: Colors.white,),
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (_) => EditProfileScreen(usuario: this._usuarioService.usuarioStore.usuario)
-                                  ));
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(builder: (_) => EditProfileScreen(usuario: this._usuarioService.usuarioStore.usuario)));
                                 },
                               )
                             ],
@@ -127,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      body: _listaAtividades(),
+      body: _listarAtividadesStream(),
     );
   }
 
@@ -181,13 +183,18 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Text("Sem atividades para exibir"),
           );
         }
-        return renderList(_atividadeService.atividadeStore.atividades);
+
+        return renderList(_atividadeService.atividadeStore.atividades.values.toList());
       },
     );
   }
 
   renderList(List<Atividade> atividades) {
+
+    atividades.sort((a1, a2) => a1.dataHoraInicio.compareTo(a2.dataHoraInicio));
+
     return ListView(
+      padding: EdgeInsets.only(bottom: 50),
       children: atividades.map((ativade) {
         return Card(
             child: InkWell(
@@ -229,7 +236,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (ctx) {
                               if (_usuarioService.usuarioStore.usuario.admin) {
                                 return InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed("atividade", arguments: ativade);
+                                  },
                                   child: Padding(
                                     padding: const EdgeInsets.all(20),
                                     child: Text("Editar"),
@@ -240,11 +249,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             },
                           ),
+                          ativade.avisar.contains(_usuarioService.usuarioStore.usuario.uid) ?
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _atividadeService.toogleAvisar(ativade, _usuarioService.usuarioStore.usuario.uid);
+                            },
                             child: Padding(
                               padding: const EdgeInsets.all(20),
-                              child: Text("Avise-me"),
+                              child: Text("Não avisar", style: TextStyle(color: Colors.deepOrange)),
+                            ),
+                          )
+                              :
+                          InkWell(
+                            onTap: () {
+                              _atividadeService.toogleAvisar(ativade, _usuarioService.usuarioStore.usuario.uid);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Text("Avise-me", style: TextStyle(color: Colors.green)),
                             ),
                           )
                         ],

@@ -15,6 +15,7 @@ import 'package:catolica/stores/usuario_store.dart';
 import 'package:catolica/utils/navigator_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +46,7 @@ class _MyAppState extends State<MyApp> {
             lazy: false,
           ),
           ProxyProvider2<HudStore, UsuarioStore, UsuarioService>(
-            update: (_, hudStore, usuarioStore, __) => UsuarioService(usuarioStore, FirebaseAuth.instance, Firestore.instance, hudStore),
+            update: (_, hudStore, usuarioStore, __) => UsuarioService(usuarioStore, FirebaseAuth.instance, Firestore.instance, hudStore, FirebaseMessaging()),
             lazy: false,
             dispose: (_, usuarioService) {
               usuarioService.dispose();

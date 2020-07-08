@@ -55,13 +55,23 @@ class AtividadeService {
 //      conflictAlgorithm: ConflictAlgorithm.replace,
 //    );
 
-    _hudStore.show("Adicionando atividade...");
-    DocumentReference atividadeRef = _firestore.collection(Atividade.TABLE_NAME).document();
+    _hudStore.show("Salvando atividade...");
+    DocumentReference atividadeRef = _firestore.collection(Atividade.TABLE_NAME).document(atividade.id);
     Atividade novaAtividade = atividade.copyWith(id: atividadeRef.documentID);
-    atividadeStore.adicionarAtividade(novaAtividade);
-
-    return atividadeRef.setData(novaAtividade.toMap()).then((_) => novaAtividade)
+    atividadeStore.setarAtividade(novaAtividade);
+    return atividadeRef.setData(novaAtividade.toMap(), merge: true)
+        .then((_) => novaAtividade)
         .whenComplete(() => _hudStore.hide());
+  }
+
+  Future toogleAvisar(Atividade atividade, String uid) {
+    if (atividade.avisar.contains(uid)) {
+      Atividade alterada = atividade.copyWith(avisar: atividade.avisar.where((element) => element != uid).toList());
+      salvar(alterada);
+    }else{
+      Atividade alterada = atividade.copyWith(avisar: atividade.avisar..add(uid));
+      salvar(alterada);
+    }
   }
 
   void dispose() {

@@ -19,14 +19,14 @@ mixin _$AtividadeStore on _AtividadeStore, Store {
   final _$atividadesAtom = Atom(name: '_AtividadeStore.atividades');
 
   @override
-  ObservableList<Atividade> get atividades {
+  ObservableMap<String, Atividade> get atividades {
     _$atividadesAtom.context.enforceReadPolicy(_$atividadesAtom);
     _$atividadesAtom.reportObserved();
     return super.atividades;
   }
 
   @override
-  set atividades(ObservableList<Atividade> value) {
+  set atividades(ObservableMap<String, Atividade> value) {
     _$atividadesAtom.context.conditionallyRunInAction(() {
       super.atividades = value;
       _$atividadesAtom.reportChanged();
@@ -37,10 +37,10 @@ mixin _$AtividadeStore on _AtividadeStore, Store {
       ActionController(name: '_AtividadeStore');
 
   @override
-  dynamic adicionarAtividade(Atividade atividade) {
+  dynamic setarAtividade(Atividade atividade) {
     final _$actionInfo = _$_AtividadeStoreActionController.startAction();
     try {
-      return super.adicionarAtividade(atividade);
+      return super.setarAtividade(atividade);
     } finally {
       _$_AtividadeStoreActionController.endAction(_$actionInfo);
     }

@@ -9,8 +9,9 @@ class Atividade {
   final DateTime dataHoraFim;
   final String foto;
   final String usuario;
+  final List<String> avisar;
 
-  Atividade({this.id, this.nome, this.descricao, this.local, this.dataHoraInicio, this.dataHoraFim, this.foto, this.usuario});
+  Atividade({this.id, this.nome, this.descricao, this.local, this.dataHoraInicio, this.dataHoraFim, this.foto, this.usuario, this.avisar = const []});
 
   Map<String, dynamic> toMap() {
     return {
@@ -22,6 +23,7 @@ class Atividade {
       'dataHoraFim': dataHoraFim?.millisecondsSinceEpoch,
       'foto': foto,
       'usuario': usuario,
+      'avisar': avisar
     };
   }
 
@@ -34,18 +36,20 @@ class Atividade {
         dataHoraInicio: map["dataHoraInicio"] != null ? DateTime.fromMillisecondsSinceEpoch(map["dataHoraInicio"]) : null,
         dataHoraFim: map["dataHoraFim"] != null ? DateTime.fromMillisecondsSinceEpoch(map["dataHoraFim"]) : null,
         foto: map["foto"],
-        usuario: map["usuario"]);
+        usuario: map["usuario"],
+        avisar: (map["avisar"] != null && map["avisar"] is Iterable) ? (map["avisar"] as Iterable).map((e) => e.toString()).toList() : []);
   }
 
-  Atividade copyWith({String id}) {
+  Atividade copyWith({String id, List<String> avisar}) {
     return Atividade(
-        id: id,
+        id: id ?? this.id,
         nome: this.nome,
         descricao: this.descricao,
         local: this.local,
         dataHoraInicio: this.dataHoraInicio,
         dataHoraFim: this.dataHoraFim,
         foto: this.foto,
-        usuario: this.usuario);
+        usuario: this.usuario,
+        avisar: avisar != null ? avisar : this.avisar);
   }
 }
